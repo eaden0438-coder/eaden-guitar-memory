@@ -1,11 +1,23 @@
 # Eaden Guitar Memory
 
-A numeric memory and lookup system for guitar chord, scale and arpeggio fingerings.
+**Author: Eaden Xu**  
+Revised: 23 October 2026
 
-**Author: Eaden Xu**
+A numeric memory and lookup system for guitar chord, scale and arpeggio patterns.
 
-The catalogue uses fret positions and numbered shape families while retaining conventional note names and actual chord names. It includes 651 registered patterns and 13,701 valid fret-position diagrams for 20- and 24-fret guitars.
+Website: https://eaden0438-coder.github.io/eaden-guitar-memory/
 
-The website is being prepared for Simplified Chinese, Traditional Chinese, English and Japanese. Chinese, English and Japanese PDF editions will be available from the website.
+The web catalogue offers Simplified Chinese, Traditional Chinese, English and Japanese. It retains the same pattern codes, reference frets and conventional note and chord names in every language.
 
-The system builds on established movable-shape and fretboard principles. The book acknowledges CAGED and prior fret-number notation; its purpose is a clear, consistent numeric memory system.
+The Chinese, English and Japanese books each contain 651 registered patterns, 13,701 valid fret-position diagrams and 2,323 pages. Contents, bookmarks and position links support lookup across the complete registered fretboard range. English and Japanese website lookups open their corresponding book edition.
+
+- [Chinese book](./吉他数字指型体系.pdf)
+- [English book](./Guitar_Numeric_Fingering_System_EN.pdf)
+- [Japanese book](./Guitar_Numeric_Fingering_System_JA.pdf)
+- [Offline pack](./吉他数字指型体系_2026-10-23_离线套装.zip)
+
+The offline pack includes the four-language HTML catalogue, the Chinese PDF, the registry and instructions. The English and Japanese PDFs are separate online downloads. No account is required to use the published catalogue or download the books.
+
+Numeric names organize fret positions, shape families and branches for memory and lookup. Standard note and chord names continue to describe the sounding music. The books acknowledge CAGED, movable shapes and earlier fret-number notation, and distinguish this numeric naming system from the first historical discovery of those fretboard principles.
+
+
