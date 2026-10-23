@@ -1,0 +1,70 @@
+name: Import verified multilingual release
+
+"on":
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [.github/workflows/import-release.yml]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: import-verified-multilingual-release
+  cancel-in-progress: false
+
+jobs:
+  import-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Download and verify the frozen release
+        shell: bash
+        run: |
+          set -euo pipefail
+          export RELEASE_IMPORT_DIR="$(mktemp -d)"
+          curl --fail --location --retry 3 --retry-all-errors --retry-max-time 180 --connect-timeout 20 --max-time 180 --user-agent "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36" --output "$RELEASE_IMPORT_DIR/吉他数字指型体系_2026-10-23_离线套装.zip" "https://eaden-guitar-memory.brinyloon8.chatgpt.site/%E5%90%89%E4%BB%96%E6%95%B0%E5%AD%97%E6%8C%87%E5%9E%8B%E4%BD%93%E7%B3%BB_2026-10-23_%E7%A6%BB%E7%BA%BF%E5%A5%97%E8%A3%85.zip"
+          curl --fail --location --retry 3 --retry-all-errors --retry-max-time 180 --connect-timeout 20 --max-time 180 --user-agent "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36" --output "$RELEASE_IMPORT_DIR/Guitar_Numeric_Fingering_System_EN.pdf" "https://eaden-guitar-memory.brinyloon8.chatgpt.site/Guitar_Numeric_Fingering_System_EN.pdf"
+          curl --fail --location --retry 3 --retry-all-errors --retry-max-time 180 --connect-timeout 20 --max-time 180 --user-agent "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36" --output "$RELEASE_IMPORT_DIR/Guitar_Numeric_Fingering_System_JA.pdf" "https://eaden-guitar-memory.brinyloon8.chatgpt.site/Guitar_Numeric_Fingering_System_JA.pdf"
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib, json, os, zipfile
+          stage = Path(os.environ["RELEASE_IMPORT_DIR"])
+          expected = json.loads("{\"index.html\": {\"path\": \"index.html\", \"bytes\": 1898966, \"sha256\": \"945272e36fc0ed88bdb1b28aa8609a561d0d755d2fefe268dc6bebabed15bb54\"}, \"catalog.json\": {\"path\": \"catalog.json\", \"bytes\": 3616098, \"sha256\": \"e360f4770967a98a6f50978dcefd7776396ac1a55f27f09ce241d371f2e7af83\"}, \"吉他数字指型体系.pdf\": {\"path\": \"吉他数字指型体系.pdf\", \"bytes\": 24184422, \"sha256\": \"3321301047df44d191b975bb22c9a1ea6033dd614ed01b324d665907d6c650fa\"}, \"Guitar_Numeric_Fingering_System_EN.pdf\": {\"path\": \"Guitar_Numeric_Fingering_System_EN.pdf\", \"bytes\": 23938685, \"sha256\": \"b4deb0fe5f850a369d1a5b9f125cc484a46e10ee5a5378a5247def5944d6ccdf\"}, \"Guitar_Numeric_Fingering_System_JA.pdf\": {\"path\": \"Guitar_Numeric_Fingering_System_JA.pdf\", \"bytes\": 24337789, \"sha256\": \"27f86998f2da4f229b8c43a1f3959fd5670ff11c97f1a18d01e83d3003ec269f\"}, \"吉他数字指型体系_2026-10-23_离线套装.zip\": {\"path\": \"吉他数字指型体系_2026-10-23_离线套装.zip\", \"bytes\": 22291715, \"sha256\": \"c1cbedc52b42fea53cd55918daf4fe5a36d673737434497c3bc4a3606c645318\"}}")
+          members = {'吉他数字指型体系_2026-10-23/吉他数字指型体系.pdf': '吉他数字指型体系.pdf', '吉他数字指型体系_2026-10-23/吉他数字指型总库.html': 'index.html', '吉他数字指型体系_2026-10-23/最终总登记.json': 'catalog.json'}
+          zip_name = '吉他数字指型体系_2026-10-23_离线套装.zip'
+          def verify(name, payload):
+              spec = expected[name]
+              assert len(payload) == spec["bytes"], f"Size mismatch: {name}"
+              assert hashlib.sha256(payload).hexdigest() == spec["sha256"], f"SHA256 mismatch: {name}"
+          for name in ['吉他数字指型体系_2026-10-23_离线套装.zip', 'Guitar_Numeric_Fingering_System_EN.pdf', 'Guitar_Numeric_Fingering_System_JA.pdf']:
+              verify(name, (stage / name).read_bytes())
+          with zipfile.ZipFile(stage / zip_name) as archive:
+              for member, target in members.items():
+                  payload = archive.read(member)
+                  verify(target, payload)
+                  (stage / target).write_bytes(payload)
+          for name in expected:
+              payload = (stage / name).read_bytes()
+              verify(name, payload)
+              Path(name).write_bytes(payload)
+          print("Verified all six release assets against frozen SHA256 and byte sizes.")
+          PY
+      - name: Commit verified assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- 'index.html' 'catalog.json' '吉他数字指型体系.pdf' 'Guitar_Numeric_Fingering_System_EN.pdf' 'Guitar_Numeric_Fingering_System_JA.pdf' '吉他数字指型体系_2026-10-23_离线套装.zip'
+          if git diff --cached --quiet; then
+            echo "The verified release is already present."
+          else
+            git commit -m "Import verified four-language catalogue and three book editions"
+            git push origin HEAD:main
+          fi
+
