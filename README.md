@@ -7,6 +7,8 @@ A numeric memory and lookup system for guitar chord, scale and arpeggio patterns
 
 Website: https://eaden0438-coder.github.io/eaden-guitar-memory/
 
+The Chinese book and offline pack now print this GitHub Pages URL as the primary catalogue entry.
+
 The web catalogue offers Simplified Chinese, Traditional Chinese, English and Japanese. It retains the same pattern codes, reference frets and conventional note and chord names in every language.
 
 The Chinese, English and Japanese books each contain 651 registered patterns, 13,701 valid fret-position diagrams and 2,323 pages. Contents, bookmarks and position links support lookup across the complete registered fretboard range. English and Japanese website lookups open their corresponding book edition.
