@@ -22,4 +22,4 @@ The offline pack includes the four-language HTML catalogue, the Chinese PDF, the
 
 Numeric names organize fret positions, shape families and branches for memory and lookup. Standard note and chord names continue to describe the sounding music. The books acknowledge CAGED, movable shapes and earlier fret-number notation, and distinguish this numeric naming system from the first historical discovery of those fretboard principles.
 
-
+The main fretboard shows the current sounding chord, scale or arpeggio name and numeric address directly below the diagram. Moving the reference fret updates this readout immediately.
